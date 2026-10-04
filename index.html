@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cozy Study Cat Timer 🐾</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Fredoka', cursive, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(180deg, #fffcf5 0%, #fde6be 70%, #fbd8a3 100%);
+      color: #5c4033;
+      padding: 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Giant brown timer digits matching image */
+    .timer {
+      font-size: 6.5rem;
+      font-weight: 700;
+      color: #5c4033;
+      letter-spacing: 2px;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Cozy Illustration Scene */
+    .scene-container {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      margin: 0.5rem 0 1.5rem 0;
+    }
+
+    .scene-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Mode Pill Badge */
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      box-shadow: 0 2px 8px rgba(92, 64, 51, 0.08);
+    }
+
+    .badge.work {
+      background-color: #ffd8cc;
+      color: #8a3b22;
+      border: 2px solid #fca582;
+    }
+
+    .badge.break {
+      background-color: #e2f0d9;
+      color: #3b6b32;
+      border: 2px solid #a3d993;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.65rem 1.5rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 22px;
+      cursor: pointer;
+      color: white;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0px rgba(92, 64, 51, 0.2);
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0px rgba(92, 64, 51, 0.2);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0px rgba(92, 64, 51, 0.2);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #start-btn { background-color: #e07a5f; }
+    #pause-btn { background-color: #f2cc8f; color: #5c4033; }
+    #reset-btn { background-color: #81b29a; }
+
+    .subtext {
+      font-size: 1rem;
+      color: #7a5c4d;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Big Timer Header -->
+    <div class="timer">
+      <span id="minutes">25</span>:<span id="seconds">00</span>
+    </div>
+
+    <!-- Mode Badge -->
+    <div id="mode-badge" class="badge work">Focus Mode 🎧</div>
+
+    <!-- Main Aesthetic Illustration -->
+    <div class="scene-container">
+      <svg class="scene-svg" viewBox="0 0 500 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Desk Surface Line -->
+        <path d="M 10 180 L 490 180" stroke="#5c4033" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M 0 195 L 500 195" stroke="#f0c285" stroke-width="20" opacity="0.4"/>
+
+        <!-- Open Book -->
+        <g id="open-book">
+          <path d="M 220 220 C 250 205 250 205 280 220 L 330 195 C 300 180 250 180 220 190 Z" fill="#ffffff" stroke="#5c4033" stroke-width="3"/>
+          <path d="M 220 220 C 190 205 190 205 160 220 L 210 195 C 240 180 190 180 220 190 Z" fill="#ffffff" stroke="#5c4033" stroke-width="3"/>
+          <!-- Book Cover Edge -->
+          <path d="M 160 220 L 160 225 C 190 210 220 210 220 225 C 220 210 250 210 280 225 L 280 220" fill="#a03c3c" stroke="#5c4033" stroke-width="3"/>
+          <!-- Book Lines -->
+          <line x1="180" y1="205" x2="205" y2="197" stroke="#d3b8ae" stroke-width="2" stroke-linecap="round"/>
+          <line x1="175" y1="212" x2="202" y2="204" stroke="#d3b8ae" stroke-width="2" stroke-linecap="round"/>
+          <line x1="235" y1="197" x2="262" y2="205" stroke="#d3b8ae" stroke-width="2" stroke-linecap="round"/>
+          <line x1="238" y1="204" x2="265" y2="212" stroke="#d3b8ae" stroke-width="2" stroke-linecap="round"/>
+        </g>
+
+        <!-- Red Book on Left -->
+        <g id="red-book">
+          <rect x="110" y="195" width="70" height="25" rx="5" fill="#e05a47" stroke="#5c4033" stroke-width="3" transform="rotate(-12 110 195)"/>
+          <rect x="115" y="192" width="60" height="5" fill="#ffffff" stroke="#5c4033" stroke-width="2" transform="rotate(-12 110 195)"/>
+        </g>
+
+        <!-- Little Bird on Red Book -->
+        <g id="bird">
+          <ellipse cx="132" cy="180" rx="14" ry="11" fill="#f4d35e" stroke="#5c4033" stroke-width="2.5"/>
+          <circle cx="126" cy="176" r="1.8" fill="#5c4033"/>
+          <polygon points="120,178 113,180 120,183" fill="#e76f51" stroke="#5c4033" stroke-width="1.5"/>
+          <path d="M 136 182 Q 142 188 138 190" stroke="#5c4033" stroke-width="2" fill="none"/>
+        </g>
+
+        <!-- Plate with Toast & Fried Egg -->
+        <g id="breakfast">
+          <ellipse cx="370" cy="200" rx="40" ry="16" fill="#ffffff" stroke="#5c4033" stroke-width="3"/>
+          <!-- Toast -->
+          <rect x="340" y="186" width="50" height="22" rx="6" fill="#f4a261" stroke="#5c4033" stroke-width="3" transform="rotate(-5 340 186)"/>
+          <rect x="343" y="189" width="44" height="16" rx="4" fill="#ffe3b3"/>
+          <!-- Egg White -->
+          <path d="M 355 194 Q 365 188 375 193 Q 382 198 372 203 Q 360 205 355 194 Z" fill="#ffffff" stroke="#5c4033" stroke-width="2"/>
+          <!-- Yolk -->
+          <circle cx="367" cy="197" r="5.5" fill="#e76f51"/>
+        </g>
+
+        <!-- Coffee Mug -->
+        <g id="coffee">
+          <rect x="300" y="155" width="28" height="32" rx="5" fill="#ffffff" stroke="#5c4033" stroke-width="3"/>
+          <ellipse cx="314" cy="155" rx="14" ry="4" fill="#6b4226" stroke="#5c4033" stroke-width="2"/>
+          <path d="M 328 162 C 336 162 336 177 328 177" stroke="#5c4033" stroke-width="3" fill="none"/>
+          <!-- Steam -->
+          <path d="M 308 147 Q 306 140 310 135" stroke="#d3b8ae" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M 318 148 Q 320 142 316 136" stroke="#d3b8ae" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </g>
+
+        <!-- White Cat -->
+        <g id="sleeping-cat">
+          <!-- Body -->
+          <ellipse cx="225" cy="155" rx="55" ry="38" fill="#ffffff" stroke="#5c4033" stroke-width="3.5"/>
+          <!-- Ears -->
+          <path d="M 185 130 L 175 105 L 200 120 Z" fill="#ffffff" stroke="#5c4033" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M 183 125 L 178 112 L 193 120 Z" fill="#ffccd5"/>
+          <path d="M 245 120 L 270 105 L 260 130 Z" fill="#ffffff" stroke="#5c4033" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M 249 120 L 264 112 L 257 125 Z" fill="#ffccd5"/>
+          
+          <!-- Sleeping Eyes & Blush -->
+          <path d="M 190 145 Q 197 152 204 145" stroke="#5c4033" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M 220 145 Q 227 152 234 145" stroke="#5c4033" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <ellipse cx="185" cy="150" rx="6" ry="3.5" fill="#ffb3c1" opacity="0.8"/>
+          <ellipse cx="238" cy="150" rx="6" ry="3.5" fill="#ffb3c1" opacity="0.8"/>
+          <!-- Nose / Mouth -->
+          <path d="M 211 147 L 213 149 L 215 147" stroke="#5c4033" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+          <!-- Paws -->
+          <ellipse cx="190" cy="178" rx="14" ry="9" fill="#ffffff" stroke="#5c4033" stroke-width="3"/>
+          <ellipse cx="235" cy="178" rx="14" ry="9" fill="#ffffff" stroke="#5c4033" stroke-width="3"/>
+        </g>
+
+        <!-- Headphones -->
+        <g id="headphones">
+          <!-- Headband -->
+          <path d="M 162 142 C 160 82 265 82 263 142" stroke="#685d58" stroke-width="11" stroke-linecap="round" fill="none"/>
+          <path d="M 162 142 C 160 82 265 82 263 142" stroke="#5c4033" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <!-- Earcups -->
+          <rect x="150" y="125" width="20" height="35" rx="8" fill="#8d7b73" stroke="#5c4033" stroke-width="3.5"/>
+          <rect x="255" y="125" width="20" height="35" rx="8" fill="#8d7b73" stroke="#5c4033" stroke-width="3.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Timer Controls -->
+    <div class="controls">
+      <button id="start-btn">Start 🐾</button>
+      <button id="pause-btn" disabled>Pause 💤</button>
+      <button id="reset-btn">Reset 🧶</button>
+    </div>
+
+    <div class="subtext">
+      Study Sessions Completed: <span id="session-count">0</span> 🐾
+    </div>
+
+  </div>
+
+  <script>
+    function initStudyTimer() {
+      // =========================
+      // TIMER SETTINGS (Seconds)
+      // =========================
+      const WORK_TIME = 25 * 60;  // 25 minutes
+      const BREAK_TIME = 5 * 60;  // 5 minutes
+
+      // =========================
+      // STATE
+      // =========================
+      let timeLeft = WORK_TIME;
+      let isWorkMode = true;
+      let isRunning = false;
+      let timerInterval = null;
+      let endTime = null;
+
+      let completedSessions =
+        Number(localStorage.getItem("cozyStudySessions")) || 0;
+
+      // =========================
+      // DOM ELEMENTS
+      // =========================
+      const minutesEl = document.getElementById("minutes");
+      const secondsEl = document.getElementById("seconds");
+      const modeBadge = document.getElementById("mode-badge");
+      const sessionCountEl = document.getElementById("session-count");
+
+      const startBtn = document.getElementById("start-btn");
+      const pauseBtn = document.getElementById("pause-btn");
+      const resetBtn = document.getElementById("reset-btn");
+
+      if (!minutesEl || !secondsEl || !startBtn || !pauseBtn || !resetBtn) {
+        console.error("Timer Error: Essential DOM elements are missing.");
+        return;
+      }
+
+      // =========================
+      // MEOW AUDIO SYNTHESIZER
+      // =========================
+      function playMeowSound() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          
+          const ctx = new AudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = "sine";
+          
+          const now = ctx.currentTime;
+          osc.frequency.setValueAtTime(500, now);
+          osc.frequency.exponentialRampToValueAtTime(820, now + 0.15);
+          osc.frequency.exponentialRampToValueAtTime(360, now + 0.5);
+
+          gain.gain.setValueAtTime(0.01, now);
+          gain.gain.linearRampToValueAtTime(0.3, now + 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.5);
+        } catch (e) {
+          console.warn("Audio Context blocked or not supported.");
+        }
+      }
+
+      // =========================
+      // DISPLAY & TITLE
+      // =========================
+      function updateDisplay() {
+        const safeTime = Math.max(0, Math.ceil(timeLeft));
+        const minutes = Math.floor(safeTime / 60);
+        const seconds = safeTime % 60;
+
+        const formattedMins = String(minutes).padStart(2, "0");
+        const formattedSecs = String(seconds).padStart(2, "0");
+
+        minutesEl.textContent = formattedMins;
+        secondsEl.textContent = formattedSecs;
+
+        document.title = `(${formattedMins}:${formattedSecs}) ${isWorkMode ? 'Focus' : 'Break'} - Cozy Timer`;
+
+        if (sessionCountEl) {
+          sessionCountEl.textContent = completedSessions;
+        }
+      }
+
+      // =========================
+      // UPDATE MODE UI
+      // =========================
+      function updateModeUI() {
+        if (isWorkMode) {
+          if (modeBadge) {
+            modeBadge.textContent = "Focus Mode 🎧";
+            modeBadge.classList.add("work");
+            modeBadge.classList.remove("break");
+          }
+        } else {
+          if (modeBadge) {
+            modeBadge.textContent = "Break Time ☕";
+            modeBadge.classList.add("break");
+            modeBadge.classList.remove("work");
+          }
+        }
+      }
+
+      // =========================
+      // BUTTON STATES
+      // =========================
+      function updateButtons() {
+        startBtn.disabled = isRunning;
+        pauseBtn.disabled = !isRunning;
+      }
+
+      // =========================
+      // TICK
+      // =========================
+      function tick() {
+        if (!isRunning || endTime === null) return;
+
+        const remainingMs = endTime - Date.now();
+
+        if (remainingMs <= 0) {
+          timeLeft = 0;
+          updateDisplay();
+          stopInterval();
+          switchMode();
+          return;
+        }
+
+        timeLeft = remainingMs / 1000;
+        updateDisplay();
+      }
+
+      // =========================
+      // CONTROLS
+      // =========================
+      function startTimer() {
+        if (isRunning) return;
+
+        isRunning = true;
+        endTime = Date.now() + timeLeft * 1000;
+
+        tick();
+        timerInterval = setInterval(tick, 250);
+
+        updateButtons();
+      }
+
+      function pauseTimer() {
+        if (!isRunning) return;
+
+        timeLeft = Math.max(0, (endTime - Date.now()) / 1000);
+        isRunning = false;
+        endTime = null;
+
+        stopInterval();
+        updateDisplay();
+        updateButtons();
+      }
+
+      function stopInterval() {
+        if (timerInterval !== null) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }
+
+      function resetTimer() {
+        isRunning = false;
+        endTime = null;
+
+        stopInterval();
+
+        timeLeft = isWorkMode ? WORK_TIME : BREAK_TIME;
+
+        updateDisplay();
+        updateButtons();
+      }
+
+      function switchMode() {
+        isRunning = false;
+        endTime = null;
+
+        stopInterval();
+        playMeowSound();
+
+        if (isWorkMode) {
+          completedSessions++;
+          localStorage.setItem("cozyStudySessions", String(completedSessions));
+
+          isWorkMode = false;
+          timeLeft = BREAK_TIME;
+        } else {
+          isWorkMode = true;
+          timeLeft = WORK_TIME;
+        }
+
+        updateModeUI();
+        updateDisplay();
+        updateButtons();
+
+        startTimer();
+      }
+
+      // =========================
+      // EVENT LISTENERS
+      // =========================
+      startBtn.addEventListener("click", startTimer);
+      pauseBtn.addEventListener("click", pauseTimer);
+      resetBtn.addEventListener("click", resetTimer);
+
+      // INITIALIZE
+      updateModeUI();
+      updateDisplay();
+      updateButtons();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initStudyTimer);
+    } else {
+      initStudyTimer();
+    }
+  </script>
+</body>
+</html>
